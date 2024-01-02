@@ -19,6 +19,10 @@ const Login = ({ navigation }) => {
 
     const handleLogin = async () => {
         try {
+            if (!email || !password) {
+                Alert.alert('Validation Error', 'Please enter both email and password.');
+                return;
+            }
             const response = await axios.post('http://192.168.1.7:8000/user/login', {
                 email,
                 password,
