@@ -42,13 +42,18 @@ const Signup = ({ navigation }) => {
                 // Successful signup
                 Alert.alert('Success', 'Account created successfully');
                 navigation.navigate('Login');
-            } else {
+            }
+             else {
                 // Handle errors from the backend
                 Alert.alert('Error', response.data.message || 'Something went wrong');
             }
         } catch (error) {
+            if(error.status === 400) {
+                // Handle errors from the backend
+                Alert.alert('Error', error || 'Account already registered');
+            }
             console.error('Error during signup:', error.message);
-            Alert.alert('Error', 'Something went');
+            Alert.alert('Error', 'Something went wrong');
         }
     };
 
