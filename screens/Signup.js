@@ -47,13 +47,15 @@ const Signup = ({ navigation }) => {
                 // Handle errors from the backend
                 Alert.alert('Error', response.data.message || 'Something went wrong');
             }
-        } catch (error) {
-            if(error.status === 400) {
-                // Handle errors from the backend
-                Alert.alert('Error', error || 'Account already registered');
+        }  catch (error) {
+            if (error.response && error.response.status === 400) {
+                // Handle 400 status (email already registered)
+                Alert.alert('Error', 'Email is already registered');
+            } else {
+                // Handle other errors
+                console.error('Error during signup:', error.message);
+                Alert.alert('Error', 'Something went wrong');
             }
-            console.error('Error during signup:', error.message);
-            Alert.alert('Error', 'Something went wrong');
         }
     };
 
