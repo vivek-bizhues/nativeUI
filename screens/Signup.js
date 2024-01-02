@@ -1,14 +1,57 @@
-import { View, Text, Image, Pressable, TextInput, TouchableOpacity } from 'react-native'
+import { View, Text, Image, Pressable, TextInput, TouchableOpacity, Alert } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from "react-native-safe-area-context";
 import COLORS from '../constants/colors';
 import { Ionicons } from "@expo/vector-icons";
 import Checkbox from "expo-checkbox"
 import Button from '../components/Button';
+import axios from 'axios';
 
 const Signup = ({ navigation }) => {
     const [isPasswordShown, setIsPasswordShown] = useState(false);
     const [isChecked, setIsChecked] = useState(false);
+    const [email, setEmail] = useState('');
+    const [mobile, setMobileNumber] = useState('');
+    const [password, setPassword] = useState('');
+
+    const handleSignUp = async () => {
+        try {
+            // Validate inputs (you may want to add more validation)
+            if (!email || !mobile || !password) {
+                Alert.alert('Validation Error', 'Please fill in all the fields');
+                return;
+            }
+    
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                Alert.alert('Validation Error', 'Please enter a valid email address');
+                return;
+            }
+    
+            console.log(email, mobile, password);
+    
+            // Make a network request to your backend API using Axios
+            const response = await axios.post('http://192.168.1.7:8000/user/register', {
+                email,
+                mobile,
+                password,
+            });
+    
+            // Handle the response from the backend
+            if (response.status === 200) {
+                // Successful signup
+                Alert.alert('Success', 'Account created successfully');
+                navigation.navigate('Login');
+            } else {
+                // Handle errors from the backend
+                Alert.alert('Error', response.data.message || 'Something went wrong');
+            }
+        } catch (error) {
+            console.error('Error during signup:', error.message);
+            Alert.alert('Error', 'Something went');
+        }
+    };
+
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
             <View style={{ flex: 1, marginHorizontal: 22 }}>
@@ -49,6 +92,8 @@ const Signup = ({ navigation }) => {
                             placeholder='Enter your email address'
                             placeholderTextColor={COLORS.black}
                             keyboardType='email-address'
+                            value={email}
+                            onChangeText={(text) => setEmail(text)}
                             style={{
                                 width: "100%"
                             }}
@@ -74,22 +119,23 @@ const Signup = ({ navigation }) => {
                         justifyContent: "space-between",
                         paddingLeft: 22
                     }}>
-                        <TextInput
-                            placeholder='+91'
-                            placeholderTextColor={COLORS.black}
-                            keyboardType='numeric'
-                            style={{
-                                width: "12%",
-                                borderRightWidth: 1,
-                                borderLeftColor: COLORS.grey,
-                                height: "100%"
-                            }}
-                        />
+
+                        <Text style={{
+                            width: "10%",
+                            borderRightWidth: 1,
+                            borderLeftColor: COLORS.grey,
+                            height: "100%",
+                            textAlign: 'justify',
+                            textAlignVertical: 'center',
+                        }}>+91</Text>
+
 
                         <TextInput
                             placeholder='Enter your phone number'
                             placeholderTextColor={COLORS.black}
                             keyboardType='numeric'
+                            value={mobile}
+                            onChangeText={(text) => setMobileNumber(text)}
                             style={{
                                 width: "80%"
                             }}
@@ -118,6 +164,8 @@ const Signup = ({ navigation }) => {
                             placeholder='Enter your password'
                             placeholderTextColor={COLORS.black}
                             secureTextEntry={isPasswordShown}
+                            value={password}
+                            onChangeText={(text) => setPassword(text)}
                             style={{
                                 width: "100%"
                             }}
@@ -159,6 +207,7 @@ const Signup = ({ navigation }) => {
                 <Button
                     title="Sign Up"
                     filled
+                    onPress={handleSignUp}
                     style={{
                         marginTop: 18,
                         marginBottom: 4,

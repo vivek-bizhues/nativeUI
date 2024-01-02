@@ -1,14 +1,41 @@
-import { View, Text, Image , Pressable, TextInput, TouchableOpacity } from 'react-native'
+import { View, Text, Image , Pressable, TextInput, TouchableOpacity, Alert } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from "react-native-safe-area-context";
 import COLORS from '../constants/colors';
 import { Ionicons } from "@expo/vector-icons";
 import Checkbox from "expo-checkbox"
 import Button from '../components/Button';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const Login = ({ navigation }) => {
+
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [isPasswordShown, setIsPasswordShown] = useState(false);
     const [isChecked, setIsChecked] = useState(false);
+
+
+    const handleLogin = async () => {
+        try {
+            const response = await axios.post('http://192.168.1.7:8000/user/login', {
+                email,
+                password,
+            });
+
+            const token = response.data.token;
+            // You can now handle the token as needed, such as storing it in AsyncStorage or Redux.
+            await AsyncStorage.setItem('token', token);
+            console.log('Token:', token);
+            navigation.navigate('Home');
+
+            // Add navigation logic or any other actions you want to perform after successful login.
+        } catch (error) {
+            console.error('Login error:', error);
+            Alert.alert('Error', 'Invalid email or password. Please try again.');
+        }
+    };
     
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
@@ -50,6 +77,8 @@ const Login = ({ navigation }) => {
                             placeholder='Enter your email address'
                             placeholderTextColor={COLORS.black}
                             keyboardType='email-address'
+                            value={email}
+                            onChangeText={(text) => setEmail(text)}
                             style={{
                                 width: "100%"
                             }}
@@ -78,6 +107,8 @@ const Login = ({ navigation }) => {
                             placeholder='Enter your password'
                             placeholderTextColor={COLORS.black}
                             secureTextEntry={isPasswordShown}
+                            value={password}
+                            onChangeText={(text) => setPassword(text)}
                             style={{
                                 width: "100%"
                             }}
@@ -119,6 +150,7 @@ const Login = ({ navigation }) => {
                 <Button
                     title="Login"
                     filled
+                    onPress={handleLogin}
                     style={{
                         marginTop: 18,
                         marginBottom: 4,
