@@ -10,6 +10,7 @@ import axios from 'axios';
 const Signup = ({ navigation }) => {
     const [isPasswordShown, setIsPasswordShown] = useState(false);
     const [isChecked, setIsChecked] = useState(false);
+    const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [mobile, setMobileNumber] = useState('');
     const [password, setPassword] = useState('');
@@ -17,7 +18,7 @@ const Signup = ({ navigation }) => {
     const handleSignUp = async () => {
         try {
             // Validate inputs (you may want to add more validation)
-            if (!email || !mobile || !password) {
+            if (!username ||!email || !mobile || !password) {
                 Alert.alert('Validation Error', 'Please fill in all the fields');
                 return;
             }
@@ -28,10 +29,11 @@ const Signup = ({ navigation }) => {
                 return;
             }
     
-            console.log(email, mobile, password);
+            // console.log(username, email, mobile, password);
     
             // Make a network request to your backend API using Axios
             const response = await axios.post('http://192.168.1.7:8000/user/register', {
+                username,
                 email,
                 mobile,
                 password,
@@ -76,6 +78,36 @@ const Signup = ({ navigation }) => {
                         fontSize: 16,
                         color: COLORS.black
                     }}>Connect with your friend today!</Text>
+                </View>
+
+                <View style={{ marginBottom: 12 }}>
+                    <Text style={{
+                        fontSize: 16,
+                        fontWeight: 400,
+                        marginVertical: 8
+                    }}>Username</Text>
+
+                    <View style={{
+                        width: "100%",
+                        height: 48,
+                        borderColor: COLORS.black,
+                        borderWidth: 1,
+                        borderRadius: 8,
+                        alignItems: "center",
+                        justifyContent: "center",
+                        paddingLeft: 22
+                    }}>
+                        <TextInput
+                            placeholder='Enter your username'
+                            placeholderTextColor={COLORS.black}
+                            keyboardType='default'
+                            value={username}
+                            onChangeText={(text) => setUsername(text)}
+                            style={{
+                                width: "100%"
+                            }}
+                        />
+                    </View>
                 </View>
 
                 <View style={{ marginBottom: 12 }}>

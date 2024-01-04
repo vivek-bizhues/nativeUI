@@ -29,9 +29,12 @@ const Login = ({ navigation }) => {
             });
 
             const token = response.data.token;
+            const user = response.data.user;
             // You can now handle the token as needed, such as storing it in AsyncStorage or Redux.
             await AsyncStorage.setItem('token', token);
-            console.log('Token:', token);
+            await AsyncStorage.setItem('user', JSON.stringify(user));
+            // console.log('Token:', token);
+            // console.log("User:",user);
             navigation.navigate('Home');
 
             // Add navigation logic or any other actions you want to perform after successful login.
